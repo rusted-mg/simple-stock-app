@@ -12,4 +12,8 @@ public class Vente {
     private String design;
     private double prix;
     private double quantite;
+
+    public double montant() {
+        return prix * quantite;
+    }
 }

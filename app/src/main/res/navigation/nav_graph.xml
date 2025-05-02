@@ -3,16 +3,16 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/nav_graph"
-            app:startDestination="@id/FirstFragment">
+            app:startDestination="@id/StockListFragment">
 
     <fragment
-            android:id="@+id/FirstFragment"
-            android:name="io.github.rusted.simplestock.FirstFragment"
-            android:label="@string/first_fragment_label"
-            tools:layout="@layout/fragment_first">
+            android:id="@+id/StockListFragment"
+            android:name="io.github.rusted.simplestock.StockListFragment"
+            android:label="@string/stock_list_fragment_label"
+            tools:layout="@layout/fragment_stock_list">
 
         <action
-                android:id="@+id/action_FirstFragment_to_SecondFragment"
+                android:id="@+id/action_StockList_to_SecondFragment"
                 app:destination="@id/SecondFragment"/>
     </fragment>
     <fragment
@@ -23,6 +23,6 @@
 
         <action
                 android:id="@+id/action_SecondFragment_to_FirstFragment"
-                app:destination="@id/FirstFragment"/>
+                app:destination="@id/StockListFragment"/>
     </fragment>
 </navigation>

@@ -39,7 +39,6 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
-    implementation(libs.hikari.cp)
     implementation(libs.mariadb)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

@@ -2,7 +2,7 @@
     <string name="app_name">Simple Stock</string>
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
+    <string name="stock_list_fragment_label">Liste des ventes</string>
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
@@ -38,4 +38,8 @@
         dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
     <string name="do_an_action">Do something</string>
+    <string name="design">%1$s</string>
+    <string name="prix">Prix : %1$.2f</string>
+    <string name="quantite">Quantité : %1$d</string>
+    <string name="montant">Montant : %1$.2f</string>
 </resources>
