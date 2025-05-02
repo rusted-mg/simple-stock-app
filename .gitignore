@@ -8,3 +8,5 @@
 .externalNativeBuild
 .cxx
 local.properties
+/app/src/main/assets/application.properties
+/app/src/test/resources/application.properties
