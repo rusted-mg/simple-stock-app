@@ -1,4 +1,4 @@
-package com.example.simplestock;
+package io.github.rusted.simplestock;
 
 import org.junit.Test;
 

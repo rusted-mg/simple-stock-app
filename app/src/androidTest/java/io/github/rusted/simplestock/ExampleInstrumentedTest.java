@@ -1,4 +1,4 @@
-package com.example.simplestock;
+package io.github.rusted.simplestock;
 
 import android.content.Context;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -20,6 +20,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.example.simplestock", appContext.getPackageName());
+        assertEquals("io.github.rusted.simplestock", appContext.getPackageName());
     }
 }

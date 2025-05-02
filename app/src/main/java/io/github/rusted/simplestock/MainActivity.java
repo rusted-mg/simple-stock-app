@@ -1,4 +1,4 @@
-package com.example.simplestock;
+package io.github.rusted.simplestock;
 
 import android.os.Bundle;
 import android.view.Menu;
@@ -8,8 +8,8 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import com.example.simplestock.databinding.ActivityMainBinding;
 import com.google.android.material.snackbar.Snackbar;
+import io.github.rusted.simplestock.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
 

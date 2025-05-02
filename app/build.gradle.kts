@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.simplestock"
+    namespace = "io.github.rusted.simplestock"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.simplestock"
+        applicationId = "io.github.rusted.simplestock"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
