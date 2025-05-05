@@ -1,26 +1,25 @@
 package io.github.rusted.simplestock.data;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 import io.github.rusted.simplestock.util.Config;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConnectionProvider {
-    private final HikariDataSource DATA_SOURCE;
+    @NotNull
+    private final Config config;
 
     public ConnectionProvider(@NotNull Config config) {
-        HikariConfig CONFIG = new HikariConfig();
-        CONFIG.setJdbcUrl(config.get("db.url"));
-        CONFIG.setUsername(config.get("db.username"));
-        CONFIG.setPassword(config.get("db.password"));
-        CONFIG.setMaximumPoolSize(Integer.parseInt(config.get("db.pool.size")));
-        DATA_SOURCE = new HikariDataSource(CONFIG);
+        this.config = config;
     }
 
     public Connection getConnection() throws SQLException {
-        return DATA_SOURCE.getConnection();
+        return DriverManager.getConnection(
+                config.get("db.url"),
+                config.get("db.username"),
+                config.get("db.password")
+        );
     }
 }
