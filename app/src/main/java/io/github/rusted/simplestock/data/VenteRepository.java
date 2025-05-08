@@ -20,7 +20,7 @@ public class VenteRepository {
     public List<Vente> all() throws SQLException {
         List<Vente> ventes = new ArrayList<>();
         try (Connection conn = connect()) {
-            ResultSet resultSet = conn.createStatement().executeQuery("SELECT * FROM vente");
+            ResultSet resultSet = conn.createStatement().executeQuery("SELECT * FROM vente ORDER BY numProduit DESC");
             while (resultSet.next()) {
                 ventes.add(venteFromResultSet(resultSet));
             }

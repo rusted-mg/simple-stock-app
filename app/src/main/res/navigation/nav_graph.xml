@@ -12,17 +12,21 @@
             tools:layout="@layout/fragment_stock_list">
 
         <action
-                android:id="@+id/action_StockList_to_SecondFragment"
-                app:destination="@id/SecondFragment"/>
+                android:id="@+id/action_StockList_to_StockForm"
+                app:destination="@id/StockFormFragment"/>
     </fragment>
     <fragment
-            android:id="@+id/SecondFragment"
-            android:name="io.github.rusted.simplestock.SecondFragment"
-            android:label="@string/second_fragment_label"
-            tools:layout="@layout/fragment_second">
+            android:id="@+id/StockFormFragment"
+            android:name="io.github.rusted.simplestock.StockFormFragment"
+            android:label="@string/stock_form_fragment_label"
+            tools:layout="@layout/fragment_stock_form">
 
         <action
-                android:id="@+id/action_SecondFragment_to_FirstFragment"
+                android:id="@+id/action_StockForm_to_StockList"
                 app:destination="@id/StockListFragment"/>
+        <argument
+                android:name="operation"
+                app:argType="io.github.rusted.simplestock.enums.StockFormOperationMode"
+                android:defaultValue="CREATE"/>
     </fragment>
 </navigation>

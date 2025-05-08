@@ -1,31 +1,22 @@
 package io.github.rusted.simplestock;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import io.github.rusted.simplestock.adapter.StockAdapter;
-import io.github.rusted.simplestock.data.ConnectionProvider;
-import io.github.rusted.simplestock.data.Vente;
-import io.github.rusted.simplestock.data.VenteRepository;
 import io.github.rusted.simplestock.databinding.FragmentStockListBinding;
-import io.github.rusted.simplestock.util.AndroidConfig;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executors;
+import io.github.rusted.simplestock.enums.StockFormOperationMode;
+import io.github.rusted.simplestock.viewmodel.StockViewModel;
 
 public class StockListFragment extends Fragment {
 
     private FragmentStockListBinding binding;
-    private final List<Vente> ventes = new ArrayList<>();
-    private final StockAdapter stockAdapter = new StockAdapter(ventes);
 
     @Override
     public View onCreateView(
@@ -39,26 +30,16 @@ public class StockListFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        binding.fabAddProduct.setOnClickListener(v ->
-                NavHostFragment.findNavController(StockListFragment.this)
-                        .navigate(R.id.action_StockList_to_SecondFragment)
-        );
+        binding.fabAddProduct.setOnClickListener(v -> {
+            var action = StockListFragmentDirections.actionStockListToStockForm();
+            action.setOperation(StockFormOperationMode.CREATE);
+            NavHostFragment.findNavController(StockListFragment.this).navigate(action);
+        });
+        StockAdapter stockAdapter = new StockAdapter();
+        StockViewModel viewModel = new ViewModelProvider(requireActivity()).get(StockViewModel.class);
         binding.recyclerviewStock.setLayoutManager(new LinearLayoutManager(this.getContext()));
         binding.recyclerviewStock.setAdapter(stockAdapter);
-
-        Executors.newSingleThreadExecutor().execute(() -> {
-            try {
-                List<Vente> fetched = new VenteRepository(new ConnectionProvider(new AndroidConfig(this.getContext()))).all();
-                Log.i("SimpleStock", "Fetched: " + fetched.size() + " ventes");
-                requireActivity().runOnUiThread(() -> {
-                    ventes.clear();
-                    ventes.addAll(fetched);
-                    stockAdapter.notifyItemRangeChanged(0, fetched.size());
-                });
-            } catch (SQLException e) {
-                Log.e("SimpleStock", "onViewCreated: Failed to fetch Ventes", e);
-            }
-        });
+        viewModel.ventes().observe(getViewLifecycleOwner(), stockAdapter::submitList);
     }
 
     @Override

@@ -2,56 +2,63 @@ package io.github.rusted.simplestock.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 import io.github.rusted.simplestock.R;
 import io.github.rusted.simplestock.data.Vente;
+import io.github.rusted.simplestock.databinding.StockItemBinding;
+import io.github.rusted.simplestock.util.FormatUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+public class StockAdapter extends ListAdapter<Vente, StockAdapter.ViewHolder> {
+    private static final DiffUtil.ItemCallback<Vente> DIFF_CALLBACK = new DiffUtil.ItemCallback<>() {
+        @Override
+        public boolean areItemsTheSame(@NonNull @NotNull Vente oldItem, @NonNull @NotNull Vente newItem) {
+            return oldItem.getNumProduit() == newItem.getNumProduit();
+        }
 
-public class StockAdapter extends RecyclerView.Adapter<StockAdapter.ViewHolder> {
-    private final List<Vente> ventes;
+        @Override
+        public boolean areContentsTheSame(@NonNull @NotNull Vente oldItem, @NonNull @NotNull Vente newItem) {
+            return oldItem.equals(newItem);
+        }
+    };
 
-    public StockAdapter(List<Vente> ventes) {
-        this.ventes = ventes;
+    public StockAdapter() {
+        super(DIFF_CALLBACK);
     }
 
     @NonNull
     @NotNull
     @Override
     public StockAdapter.ViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.stock_item, viewGroup, false);
-        return new ViewHolder(view);
+        LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
+        StockItemBinding binding = StockItemBinding.inflate(inflater, viewGroup, false);
+        return new ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull @NotNull StockAdapter.ViewHolder viewHolder, int i) {
-        Vente vente = ventes.get(i);
-        Context context = viewHolder.itemView.getContext();
-        viewHolder.design.setText(context.getString(R.string.design, vente.getDesign()));
-        viewHolder.prix.setText(context.getString(R.string.prix, vente.getPrix()));
-        viewHolder.quantite.setText(context.getString(R.string.quantite, (int) vente.getQuantite()));
-        viewHolder.montant.setText(context.getString(R.string.montant, vente.montant()));
-    }
-
-    @Override
-    public int getItemCount() {
-        return ventes.size();
+        Vente vente = getItem(i);
+        viewHolder.bind(vente);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView design, prix, quantite, montant;
+        private final StockItemBinding binding;
 
-        public ViewHolder(@NonNull @NotNull View itemView) {
-            super(itemView);
-            design = itemView.findViewById(R.id.design);
-            prix = itemView.findViewById(R.id.prix);
-            quantite = itemView.findViewById(R.id.quantite);
-            montant = itemView.findViewById(R.id.montant);
+        public ViewHolder(@NotNull StockItemBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
+
+        public void bind(@NotNull Vente vente) {
+            Context context = itemView.getContext();
+            binding.design.setText(context.getString(R.string.design, vente.getDesign()));
+            binding.prix.setText(context.getString(R.string.prix, FormatUtil.format(vente.getPrix())));
+            binding.quantite.setText(context.getString(R.string.quantite, FormatUtil.format(vente.getQuantite())));
+            binding.montant.setText(context.getString(R.string.montant, FormatUtil.format(vente.montant())));
         }
     }
 }
