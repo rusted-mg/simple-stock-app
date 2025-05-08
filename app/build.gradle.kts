@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.android.lombok)
+    alias(libs.plugins.android.navigation.safeArgs)
 }
 
 android {

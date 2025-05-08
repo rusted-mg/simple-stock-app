@@ -3,12 +3,18 @@ package io.github.rusted.simplestock;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import io.github.rusted.simplestock.databinding.ActivityMainBinding;
+import io.github.rusted.simplestock.viewmodel.StockViewModel;
+import org.jetbrains.annotations.NotNull;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -21,12 +27,31 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
         setSupportActionBar(binding.toolbar);
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        StockViewModel viewModel = new ViewModelProvider(this).get(StockViewModel.class);
+        viewModel.error().observe(this, this::showError);
+        viewModel.venteCreated().observe(this, unused -> this.showSuccess(R.string.vente_created_message));
+        viewModel.fetch();
+    }
+
+    private void showSuccess(@StringRes int message, Object... formatArgs) {
+        Snackbar.make(
+                binding.getRoot(),
+                getString(message, formatArgs),
+                BaseTransientBottomBar.LENGTH_SHORT
+        ).show();
+    }
+
+    private void showError(@NotNull io.github.rusted.simplestock.util.Error error) {
+        Snackbar.make(
+                binding.getRoot(),
+                getString(R.string.error_formatted, error.message, error.exception.getMessage()),
+                BaseTransientBottomBar.LENGTH_SHORT
+        ).show();
     }
 
     @Override
