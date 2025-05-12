@@ -7,7 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 import io.github.rusted.simplestock.data.Vente;
@@ -15,8 +17,7 @@ import io.github.rusted.simplestock.databinding.FragmentStockFormBinding;
 import io.github.rusted.simplestock.enums.StockFormOperationMode;
 import io.github.rusted.simplestock.util.FormatUtil;
 import io.github.rusted.simplestock.viewmodel.StockViewModel;
-
-import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
 
 public class StockFormFragment extends Fragment {
 
@@ -61,34 +62,57 @@ public class StockFormFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        StockFormOperationMode mode = StockFormFragmentArgs.fromBundle(getArguments()).getOperation();
-        if (mode == StockFormOperationMode.CREATE) {
-            Objects.requireNonNull(
-                    NavHostFragment.findNavController(StockFormFragment.this).getCurrentDestination()
-            ).setLabel("Créer une vente");
-            binding.buttonSubmit.setText(R.string.ajouter_button_text);
-        }
-        binding.textViewMontant.setText(getString(R.string.montant_label, "0,00"));
-        binding.buttonSubmit.setOnClickListener(this::onSubmit);
+        StockFormFragmentArgs args = StockFormFragmentArgs.fromBundle(getArguments());
+        Vente v = args.getVente();
+        if (args.getOperation() == StockFormOperationMode.CREATE) setupCreateForm();
+        else if (v != null) setupUpdateForm(v);
+
         binding.editTextDesign.addTextChangedListener(watcher);
         binding.editTextPrix.addTextChangedListener(watcher);
         binding.editTextQuantite.addTextChangedListener(watcher);
     }
 
-    public void onSubmit(View ignoredView) {
+    public void onSubmit(StockFormOperationMode operationMode) {
         StockViewModel viewModel = new ViewModelProvider(requireActivity()).get(StockViewModel.class);
+        MutableLiveData<Void> success = operationMode == StockFormOperationMode.CREATE
+                ? viewModel.venteCreated()
+                : viewModel.venteUpdated();
         setLoading(true);
         viewModel.error().observe(getViewLifecycleOwner(), error -> setLoading(false));
-        viewModel.venteCreated().observe(getViewLifecycleOwner(), vente -> {
+        success.observe(getViewLifecycleOwner(), vente -> {
             setLoading(false);
-            NavHostFragment.findNavController(StockFormFragment.this).popBackStack();
+            NavHostFragment.findNavController(this).popBackStack();
         });
-        viewModel.create(Vente.builder()
+        if (operationMode == StockFormOperationMode.UPDATE) viewModel.update(buildVente());
+        else viewModel.create(buildVente());
+    }
+
+    private void setupUpdateForm(@NotNull Vente v) {
+        binding.buttonSubmit.setText(R.string.button_modifier_label);
+        binding.buttonSubmit.setIcon(AppCompatResources.getDrawable(requireContext(), R.drawable.ic_edit));
+        binding.textViewMontant.setText(getString(R.string.montant_label, FormatUtil.format(v.montant())));
+        binding.editTextDesign.setText(v.getDesign());
+        binding.editTextPrix.setText(String.valueOf(v.getPrix()));
+        binding.editTextQuantite.setText(String.valueOf(v.getQuantite()));
+        binding.textViewNumProduit.setText(String.valueOf(v.getNumProduit()));
+        binding.buttonSubmit.setOnClickListener(view -> onSubmit(StockFormOperationMode.UPDATE));
+    }
+
+    private void setupCreateForm() {
+        binding.buttonSubmit.setText(R.string.ajouter_button_text);
+        binding.textViewMontant.setText(getString(R.string.montant_label, "0,00"));
+        binding.buttonSubmit.setOnClickListener(view -> onSubmit(StockFormOperationMode.CREATE));
+    }
+
+    private Vente buildVente() {
+        Vente vente = Vente.builder()
                 .design(String.valueOf(binding.editTextDesign.getText()))
                 .prix(Double.parseDouble(String.valueOf(binding.editTextPrix.getText())))
                 .quantite(Double.parseDouble(String.valueOf(binding.editTextQuantite.getText())))
-                .build()
-        );
+                .build();
+        if (binding.textViewNumProduit.getText().length() > 0)
+            vente.setNumProduit(Integer.parseInt(binding.textViewNumProduit.getText().toString()));
+        return vente;
     }
 
     void setLoading(boolean loading) {

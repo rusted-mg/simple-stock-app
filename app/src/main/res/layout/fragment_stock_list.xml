@@ -27,6 +27,6 @@
             android:layout_gravity="bottom|end"
             android:layout_marginEnd="@dimen/fab_margin"
             android:layout_marginBottom="16dp"
-            app:srcCompat="@android:drawable/ic_menu_add"
-            android:contentDescription="@string/do_an_action"/>
+            app:srcCompat="@android:drawable/ic_input_add"
+            android:contentDescription="@string/add_stock_fab_description"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

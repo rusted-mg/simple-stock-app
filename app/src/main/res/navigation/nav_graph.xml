@@ -18,7 +18,7 @@
     <fragment
             android:id="@+id/StockFormFragment"
             android:name="io.github.rusted.simplestock.StockFormFragment"
-            android:label="@string/stock_form_fragment_label"
+            android:label="@string/create_vente_toolbar_label"
             tools:layout="@layout/fragment_stock_form">
 
         <action
@@ -28,5 +28,14 @@
                 android:name="operation"
                 app:argType="io.github.rusted.simplestock.enums.StockFormOperationMode"
                 android:defaultValue="CREATE"/>
+        <argument
+                android:name="vente"
+                app:argType="io.github.rusted.simplestock.data.Vente"
+                app:nullable="true"
+                android:defaultValue="@null"/>
+        <argument
+                android:name="venteId"
+                app:argType="integer"
+                android:defaultValue="0"/>
     </fragment>
 </navigation>

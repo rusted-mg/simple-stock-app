@@ -19,7 +19,12 @@
                 android:orientation="vertical"
                 android:divider="?android:attr/dividerVertical"
                 android:showDividers="middle">
-
+            <!-- numProduit -->
+            <TextView
+                    android:id="@+id/textViewNumProduit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"/>
             <!-- Design -->
             <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
