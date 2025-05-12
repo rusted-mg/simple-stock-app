@@ -8,13 +8,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import io.github.rusted.simplestock.databinding.ActivityMainBinding;
+import io.github.rusted.simplestock.enums.StockFormOperationMode;
 import io.github.rusted.simplestock.viewmodel.StockViewModel;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,12 +33,24 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         setSupportActionBar(binding.toolbar);
 
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        NavController navController = ((NavHostFragment) Objects.requireNonNull(
+                getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_content_main))
+        ).getNavController();
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            if (destination.getId() == R.id.StockFormFragment) {
+                if (StockFormFragmentArgs.fromBundle(arguments).getOperation() == StockFormOperationMode.UPDATE) {
+                    destination.setLabel(getString(R.string.update_vente_toolbar_label));
+                } else {
+                    destination.setLabel(getString(R.string.create_vente_toolbar_label));
+                }
+            }
+        });
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         StockViewModel viewModel = new ViewModelProvider(this).get(StockViewModel.class);
         viewModel.error().observe(this, this::showError);
         viewModel.venteCreated().observe(this, unused -> this.showSuccess(R.string.vente_created_message));
+        viewModel.venteUpdated().observe(this, unused -> this.showSuccess(R.string.vente_updated_message));
         viewModel.fetch();
     }
 

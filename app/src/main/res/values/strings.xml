@@ -6,7 +6,7 @@
     <string name="stock_form_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
-    <string name="do_an_action">Do something</string>
+    <string name="add_stock_fab_description">Ajouter une vente</string>
     <string name="design">%1$s</string>
     <string name="prix">Prix : %1$s</string>
     <string name="quantite">Quantité : %1$s</string>
@@ -18,4 +18,9 @@
     <string name="error_formatted">Error: %1$s\n%2$s</string>
     <string name="vente_created_message">Vente ajoutée avec succès</string>
     <string name="ajouter_button_text">Ajouter</string>
+    <string name="button_modifier_label">Modifier</string>
+    <string name="create_vente_toolbar_label">Créer une vente</string>
+    <string name="update_vente_toolbar_label">Modifier la vente #{venteId}</string>
+    <string name="swipe_edit_label">Modifier</string>
+    <string name="vente_updated_message">Vente modifiée avec succès</string>
 </resources>

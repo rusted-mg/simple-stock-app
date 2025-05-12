@@ -3,6 +3,7 @@ package io.github.rusted.simplestock.data;
 import androidx.annotation.Nullable;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 @Getter
@@ -10,7 +11,7 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Vente {
+public class Vente implements Serializable {
     private int numProduit;
     private String design;
     private double prix;
