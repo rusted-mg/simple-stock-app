@@ -23,4 +23,10 @@
     <string name="update_vente_toolbar_label">Modifier la vente #{venteId}</string>
     <string name="swipe_edit_label">Modifier</string>
     <string name="vente_updated_message">Vente modifiée avec succès</string>
+    <string name="button_delete_label">Supprimer</string>
+    <string name="delete_confirmation_title">Confirmation de suppression</string>
+    <string name="delete_confirmation_message">Êtes-vous sûr de vouloir supprimer cette vente?</string>
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+    <string name="vente_deleted_message">Vente supprimée avec succès</string>
 </resources>

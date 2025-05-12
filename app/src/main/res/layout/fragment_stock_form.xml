@@ -89,6 +89,17 @@
                     android:layout_marginTop="16dp"
                     android:enabled="false"
                     style="?attr/materialButtonOutlinedStyle"/>
+
+            <!-- Delete Button -->
+            <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonDelete"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/button_delete_label"
+                    app:icon="@android:drawable/ic_menu_delete"
+                    android:layout_marginTop="8dp"
+                    android:visibility="gone"
+                    style="?attr/materialButtonOutlinedStyle"/>
         </LinearLayout>
     </ScrollView>
 
