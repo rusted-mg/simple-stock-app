@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
@@ -96,12 +97,33 @@ public class StockFormFragment extends Fragment {
         binding.editTextQuantite.setText(String.valueOf(v.getQuantite()));
         binding.textViewNumProduit.setText(String.valueOf(v.getNumProduit()));
         binding.buttonSubmit.setOnClickListener(view -> onSubmit(StockFormOperationMode.UPDATE));
+
+        // Add this code to show and configure the delete button
+        binding.buttonDelete.setVisibility(View.VISIBLE);
+        binding.buttonDelete.setOnClickListener(view -> {
+            // Show a confirmation dialog
+            new AlertDialog.Builder(requireContext())
+                    .setTitle(R.string.delete_confirmation_title)
+                    .setMessage(R.string.delete_confirmation_message)
+                    .setPositiveButton(R.string.yes, (dialog, which) -> {
+                        StockViewModel viewModel = new ViewModelProvider(requireActivity()).get(StockViewModel.class);
+                        setLoading(true);
+                        viewModel.venteDeleted().observe(getViewLifecycleOwner(), unused -> {
+                            setLoading(false);
+                            NavHostFragment.findNavController(this).popBackStack();
+                        });
+                        viewModel.delete(v.getNumProduit());
+                    })
+                    .setNegativeButton(R.string.no, null)
+                    .show();
+        });
     }
 
     private void setupCreateForm() {
         binding.buttonSubmit.setText(R.string.ajouter_button_text);
         binding.textViewMontant.setText(getString(R.string.montant_label, "0,00"));
         binding.buttonSubmit.setOnClickListener(view -> onSubmit(StockFormOperationMode.CREATE));
+        binding.buttonDelete.setVisibility(View.GONE); // Hide delete button for create mode
     }
 
     private Vente buildVente() {

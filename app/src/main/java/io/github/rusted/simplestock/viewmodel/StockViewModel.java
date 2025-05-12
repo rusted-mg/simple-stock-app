@@ -24,6 +24,7 @@ public class StockViewModel extends AndroidViewModel {
     private final MutableLiveData<Error> error = new MutableLiveData<>();
     private final MutableLiveData<Void> venteCreated = new MutableLiveData<>();
     private final MutableLiveData<Void> venteUpdated = new MutableLiveData<>();
+    private final MutableLiveData<Void> venteDeleted = new MutableLiveData<>();
 
     public StockViewModel(@NotNull Application application) {
         super(application);
@@ -44,6 +45,10 @@ public class StockViewModel extends AndroidViewModel {
 
     public MutableLiveData<Void> venteUpdated() {
         return venteUpdated;
+    }
+
+    public MutableLiveData<Void> venteDeleted() {
+        return venteDeleted;
     }
 
     public void fetch() {
@@ -83,6 +88,18 @@ public class StockViewModel extends AndroidViewModel {
                 fetch();
             } catch (SQLException e) {
                 notifyError("Failed to update Vente", e);
+            }
+        });
+    }
+
+    public void delete(int numProduit) {
+        executor.execute(() -> {
+            try {
+                repository.delete(numProduit);
+                venteDeleted.postValue(null);
+                fetch();
+            } catch (SQLException e) {
+                notifyError("Failed to delete Vente", e);
             }
         });
     }
