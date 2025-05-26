@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Chart colors for night mode -->
+    <color name="chart_text_color">@color/white</color>
+    <color name="chart_background_color">#FF121212</color>
+</resources>

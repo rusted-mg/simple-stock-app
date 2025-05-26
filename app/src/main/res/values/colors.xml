@@ -2,4 +2,15 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Chart colors -->
+    <color name="chart_text_color">@color/black</color>
+    <color name="chart_background_color">@color/white</color>
+    <color name="stats_max_color">#388E3C</color>
+    <color name="stats_min_color">#D32F2F</color>
+    <color name="stats_total_color">#1976D2</color>
+
+    <!-- Toggle FAB colors -->
+    <color name="fab_active">#3F51B5</color>
+    <color name="fab_inactive">#757575</color>
 </resources>
