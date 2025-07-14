@@ -29,4 +29,24 @@
     <string name="yes">Oui</string>
     <string name="no">Non</string>
     <string name="vente_deleted_message">Vente supprimée avec succès</string>
+    <string name="view_chart">Voir Graphique</string>
+    <string name="sales_distribution">Distribution des Ventes</string>
+    <string name="highest_revenue">Produit avec revenu le plus élevé</string>
+    <string name="lowest_revenue">Produit avec revenu le plus bas</string>
+    <string name="other_products">Autres produits</string>
+    <!-- Shortened chart labels -->
+    <string name="chart_highest">Max</string>
+    <string name="chart_lowest">Min</string>
+    <string name="chart_others">Autres</string>
+    <string name="sales_amount">Montant des Ventes</string>
+    <string name="stats_title">Statistiques</string>
+    <string name="stats_max_montant">Montant max : %1$s</string>
+    <string name="stats_min_montant">Montant min : %1$s</string>
+    <string name="stats_total_montant">Montant total : %1$s</string>
+    <string name="toggle_stats_fab_description">Afficher/Masquer les statistiques</string>
+    <string name="show_stats">Afficher les statistiques</string>
+    <string name="hide_stats">Masquer les statistiques</string>
+    <string name="total">Total</string>
+    <string name="maximum">Maximum</string>
+    <string name="minimum">Minimum</string>
 </resources>

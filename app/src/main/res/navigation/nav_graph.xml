@@ -14,6 +14,9 @@
         <action
                 android:id="@+id/action_StockList_to_StockForm"
                 app:destination="@id/StockFormFragment"/>
+        <action
+                android:id="@+id/action_StockList_to_SalesChart"
+                app:destination="@id/SalesChartFragment"/>
     </fragment>
     <fragment
             android:id="@+id/StockFormFragment"
@@ -38,4 +41,9 @@
                 app:argType="integer"
                 android:defaultValue="0"/>
     </fragment>
+    <fragment
+            android:id="@+id/SalesChartFragment"
+            android:name="io.github.rusted.simplestock.SalesChartFragment"
+            android:label="@string/sales_distribution"
+            tools:layout="@layout/fragment_sales_chart"/>
 </navigation>

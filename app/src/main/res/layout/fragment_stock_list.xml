@@ -6,6 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".StockListFragment">
+
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -14,19 +15,161 @@
         <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerview_stock"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/card_stats"/>
+
+        <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_stats"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:visibility="gone"
+                app:cardElevation="3dp"
+                app:cardCornerRadius="12dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="?attr/colorOutline"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"/>
+                app:layout_constraintStart_toStartOf="parent">
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                <!-- Header with gradient background -->
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:background="?attr/colorSecondaryContainer"
+                        android:padding="12dp">
+
+                    <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@android:drawable/ic_dialog_info"
+                            android:layout_gravity="center_vertical"
+                            android:contentDescription="@string/stats_title"
+                            app:tint="?attr/colorOnSecondaryContainer"/>
+
+                    <TextView
+                            android:id="@+id/stats_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/stats_title"
+                            android:textAppearance="?attr/textAppearanceTitleMedium"
+                            android:textColor="?attr/colorOnSecondaryContainer"
+                            android:layout_marginStart="8dp"/>
+                </LinearLayout>
+
+                <!-- Stats content -->
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                    <!-- Max montant with icon -->
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="12dp"
+                            tools:ignore="UseCompoundDrawables">
+
+                        <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@android:drawable/arrow_up_float"
+                                android:layout_gravity="center_vertical"
+                                android:contentDescription="@string/maximum"
+                                app:tint="@color/stats_max_color"/>
+
+                        <TextView
+                                android:id="@+id/stats_max_montant"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?attr/textAppearanceBodyLarge"
+                                android:layout_marginStart="12dp"
+                                tools:text="Montant max : 1000.00"/>
+                    </LinearLayout>
+
+                    <!-- Min montant with icon -->
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="12dp"
+                            tools:ignore="UseCompoundDrawables">
+
+                        <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@android:drawable/arrow_down_float"
+                                android:layout_gravity="center_vertical"
+                                android:contentDescription="@string/minimum"
+                                app:tint="@color/stats_min_color"/>
+
+                        <TextView
+                                android:id="@+id/stats_min_montant"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?attr/textAppearanceBodyLarge"
+                                android:layout_marginStart="12dp"
+                                tools:text="Montant min : 10.00"/>
+                    </LinearLayout>
+
+                    <!-- Divider -->
+                    <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="?attr/colorOutline"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginBottom="12dp"/>
+
+                    <!-- Total montant with icon -->
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            tools:ignore="UseCompoundDrawables">
+
+                        <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@android:drawable/ic_dialog_dialer"
+                                android:layout_gravity="center_vertical"
+                                android:contentDescription="@string/total"
+                                app:tint="@color/stats_total_color"/>
+
+                        <TextView
+                                android:id="@+id/stats_total_montant"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?attr/textAppearanceBodyLarge"
+                                android:textStyle="bold"
+                                android:textColor="@color/stats_total_color"
+                                android:layout_marginStart="12dp"
+                                tools:text="Montant total : 5000.00"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <!-- FAB for toggling stats view -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_add_product"
+            android:id="@+id/fab_toggle_stats"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_marginEnd="@dimen/fab_margin"
             android:layout_marginBottom="16dp"
-            app:srcCompat="@android:drawable/ic_input_add"
-            android:contentDescription="@string/add_stock_fab_description"/>
+            app:srcCompat="@android:drawable/ic_menu_info_details"
+            android:contentDescription="@string/toggle_stats_fab_description"/>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

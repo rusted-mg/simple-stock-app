@@ -1,17 +1,23 @@
 package io.github.rusted.simplestock;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.transition.TransitionManager;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -23,33 +29,178 @@ import io.github.rusted.simplestock.databinding.FragmentStockListBinding;
 import io.github.rusted.simplestock.enums.StockFormOperationMode;
 import io.github.rusted.simplestock.viewmodel.StockViewModel;
 
+import java.text.NumberFormat;
+import java.util.List;
+import java.util.Locale;
+
 public class StockListFragment extends Fragment {
 
     private FragmentStockListBinding binding;
+    private boolean isStatsVisible = false;
+    private List<Vente> currentVentes;
 
     @Override
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
-
         binding = FragmentStockListBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        binding.fabAddProduct.setOnClickListener(v -> {
-            var action = StockListFragmentDirections.actionStockListToStockForm();
-            action.setOperation(StockFormOperationMode.CREATE);
-            NavHostFragment.findNavController(this).navigate(action);
-        });
+
+        setupRecyclerView();
+        setupFabButtons();
+        setupSwipeToEdit();
+        setupMenuProvider();
+    }
+
+    private void setupRecyclerView() {
         StockAdapter stockAdapter = new StockAdapter();
         StockViewModel viewModel = new ViewModelProvider(requireActivity()).get(StockViewModel.class);
         binding.recyclerviewStock.setLayoutManager(new LinearLayoutManager(this.getContext()));
         binding.recyclerviewStock.setAdapter(stockAdapter);
-        viewModel.ventes().observe(getViewLifecycleOwner(), stockAdapter::submitList);
-        setupSwipeToEdit();
+        viewModel.ventes().observe(getViewLifecycleOwner(), ventes -> {
+            stockAdapter.submitList(ventes);
+            currentVentes = ventes;
+            updateStatsView(ventes);
+        });
+    }
+
+    private void setupFabButtons() {
+        // Setup Toggle Stats FAB
+        binding.fabToggleStats.setOnClickListener(v -> toggleStatsVisibility());
+    }
+
+    private void toggleStatsVisibility() {
+        isStatsVisible = !isStatsVisible;
+
+        // Update the FAB icon and tint based on state
+        if (isStatsVisible) {
+            binding.fabToggleStats.setImageResource(android.R.drawable.ic_menu_close_clear_cancel);
+            binding.fabToggleStats.setContentDescription(getString(R.string.hide_stats));
+            binding.fabToggleStats.setBackgroundTintList(ColorStateList.valueOf(
+                    ContextCompat.getColor(requireContext(), R.color.fab_active)));
+
+            // Show stats card with animation
+            binding.cardStats.setVisibility(View.VISIBLE);
+            binding.cardStats.setAlpha(0f);
+            binding.cardStats.animate()
+                    .alpha(1f)
+                    .setDuration(300)
+                    .setListener(null);
+
+            // Ensure stats are up to date
+            if (currentVentes != null) {
+                updateStatsView(currentVentes);
+            }
+        } else {
+            binding.fabToggleStats.setImageResource(android.R.drawable.ic_menu_info_details);
+            binding.fabToggleStats.setContentDescription(getString(R.string.show_stats));
+            binding.fabToggleStats.setBackgroundTintList(ColorStateList.valueOf(
+                    ContextCompat.getColor(requireContext(), R.color.fab_inactive)));
+
+            // Hide stats card with animation
+            binding.cardStats.animate()
+                    .alpha(0f)
+                    .setDuration(300)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            binding.cardStats.setVisibility(View.GONE);
+                        }
+                    });
+        }
+
+        // Update RecyclerView constraints based on stats visibility
+        updateRecyclerViewConstraints();
+    }
+
+    private void updateRecyclerViewConstraints() {
+        ConstraintSet constraintSet = new ConstraintSet();
+        constraintSet.clone((ConstraintLayout) binding.recyclerviewStock.getParent());
+
+        if (isStatsVisible) {
+            constraintSet.connect(
+                    R.id.recyclerview_stock,
+                    ConstraintSet.BOTTOM,
+                    R.id.card_stats,
+                    ConstraintSet.TOP,
+                    (int) TypedValue.applyDimension(
+                            TypedValue.COMPLEX_UNIT_DIP,
+                            12,
+                            getResources().getDisplayMetrics()
+                    )
+            );
+        } else {
+            constraintSet.connect(
+                    R.id.recyclerview_stock,
+                    ConstraintSet.BOTTOM,
+                    ConstraintSet.PARENT_ID,
+                    ConstraintSet.BOTTOM,
+                    0
+            );
+        }
+
+        TransitionManager.beginDelayedTransition((ViewGroup) binding.recyclerviewStock.getParent());
+        constraintSet.applyTo((ConstraintLayout) binding.recyclerviewStock.getParent());
+    }
+
+    private void setupMenuProvider() {
+        // Setup menu provider
+        requireActivity().addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(R.menu.list_menu, menu);
+            }
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                if (menuItem.getItemId() == R.id.action_add) {
+                    var action = StockListFragmentDirections.actionStockListToStockForm();
+                    action.setOperation(StockFormOperationMode.CREATE);
+                    NavHostFragment.findNavController(StockListFragment.this).navigate(action);
+                    return true;
+                } else if (menuItem.getItemId() == R.id.action_view_chart) {
+                    NavHostFragment.findNavController(StockListFragment.this)
+                            .navigate(StockListFragmentDirections.actionStockListToSalesChart());
+                    return true;
+                }
+                return false;
+            }
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
+    }
+
+    private void updateStatsView(List<Vente> ventes) {
+        if (ventes == null || ventes.isEmpty()) {
+            binding.statsMaxMontant.setText(getString(R.string.stats_max_montant, "0.00"));
+            binding.statsMinMontant.setText(getString(R.string.stats_min_montant, "0.00"));
+            binding.statsTotalMontant.setText(getString(R.string.stats_total_montant, "0.00"));
+            return;
+        }
+
+        double maxMontant = Double.MIN_VALUE;
+        double minMontant = Double.MAX_VALUE;
+        double totalMontant = 0.0;
+
+        for (Vente vente : ventes) {
+            double montant = vente.montant();
+            maxMontant = Math.max(maxMontant, montant);
+            minMontant = Math.min(minMontant, montant);
+            totalMontant += montant;
+        }
+
+        // Format the values with two decimal places
+        NumberFormat formatter = NumberFormat.getInstance(Locale.FRANCE);
+        formatter.setMinimumFractionDigits(2);
+        formatter.setMaximumFractionDigits(2);
+        formatter.setGroupingUsed(true); // Use thousand separators
+
+        binding.statsMaxMontant.setText(getString(R.string.stats_max_montant, formatter.format(maxMontant)));
+        binding.statsMinMontant.setText(getString(R.string.stats_min_montant, formatter.format(minMontant)));
+        binding.statsTotalMontant.setText(getString(R.string.stats_total_montant, formatter.format(totalMontant)));
     }
 
     private void setupSwipeToEdit() {
